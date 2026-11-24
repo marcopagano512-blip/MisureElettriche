@@ -1,0 +1,1968 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lezione Interattiva: Errori di Misura, Accuratezza e Precisione (3ª ITIS)</title>
+    <style>
+        :root {
+            --bg-main: #0b1120;
+            --bg-card: #1e293b;
+            --bg-panel: #0f172a;
+            --text-primary: #f8fafc;
+            --text-secondary: #94a3b8;
+            --accent-blue: #38bdf8;
+            --accent-green: #10b981;
+            --accent-amber: #f59e0b;
+            --accent-red: #ef4444;
+            --accent-purple: #a855f7;
+            --border-color: #334155;
+            --font-sans: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            --font-mono: 'Consolas', 'Courier New', monospace;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-primary);
+            font-family: var(--font-sans);
+            line-height: 1.55;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Header & Barra di Navigazione Didattica (Scaletta Lezione) */
+        header {
+            background-color: var(--bg-panel);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 1.5rem;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+        }
+
+        .header-top {
+            max-width: 1280px;
+            margin: 0 auto 0.85rem auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .header-title h1 {
+            font-size: 1.35rem;
+            color: var(--accent-blue);
+        }
+
+        .header-title p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+
+        .class-badge {
+            background: rgba(56, 189, 248, 0.12);
+            border: 1px solid rgba(56, 189, 248, 0.35);
+            color: var(--accent-blue);
+            padding: 0.3rem 0.75rem;
+            border-radius: 999px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        /* Stepper della scaletta */
+        .lesson-nav {
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            gap: 0.45rem;
+            overflow-x: auto;
+            padding-bottom: 0.25rem;
+        }
+
+        .nav-tab {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+            padding: 0.5rem 0.85rem;
+            border-radius: 8px;
+            font-size: 0.82rem;
+            font-weight: 600;
+            cursor: pointer;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .nav-tab:hover {
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            background-color: rgba(56, 189, 248, 0.2);
+            border-color: var(--accent-blue);
+            color: var(--text-primary);
+        }
+
+        .nav-time {
+            font-family: var(--font-mono);
+            font-size: 0.72rem;
+            opacity: 0.8;
+            background: rgba(0, 0, 0, 0.3);
+            padding: 0.1rem 0.35rem;
+            border-radius: 4px;
+        }
+
+        /* Contenitore Principale */
+        main {
+            max-width: 1280px;
+            width: 100%;
+            margin: 1.5rem auto;
+            padding: 0 1.5rem 2rem 1.5rem;
+            flex: 1;
+        }
+
+        .module-section {
+            display: none;
+            animation: fadeIn 0.25s ease;
+        }
+
+        .module-section.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Layout a due colonne desktop, impilato mobile */
+        .two-col-grid {
+            display: grid;
+            grid-template-columns: 1fr 1.15fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 960px) {
+            .two-col-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 1.35rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--border-color);
+            padding-bottom: 0.6rem;
+        }
+
+        .card-header h2 {
+            font-size: 1.15rem;
+            color: var(--text-primary);
+        }
+
+        .pill {
+            font-family: var(--font-mono);
+            font-size: 0.75rem;
+            padding: 0.2rem 0.6rem;
+            border-radius: 999px;
+            background: rgba(56, 189, 248, 0.15);
+            color: var(--accent-blue);
+        }
+
+        /* Formula Box */
+        .formula-box {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: 0.9rem 1.1rem;
+            font-family: var(--font-mono);
+            font-size: 1.05rem;
+            text-align: center;
+            color: var(--accent-blue);
+        }
+
+        .formula-caption {
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 0.4rem;
+            text-align: left;
+        }
+
+        /* Tabelle didattiche */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.88rem;
+            background-color: var(--bg-panel);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 0.65rem 0.8rem;
+            text-align: left;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        th {
+            background-color: rgba(56, 189, 248, 0.1);
+            color: var(--accent-blue);
+            font-weight: 600;
+        }
+
+        tr:last-child td {
+            border-bottom: none;
+        }
+
+        /* Pulsanti e Controlli */
+        .presets-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.6rem;
+        }
+
+        .btn-preset {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.65rem 0.75rem;
+            border-radius: 8px;
+            font-size: 0.84rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-preset:hover {
+            border-color: var(--accent-blue);
+            background-color: rgba(56, 189, 248, 0.1);
+        }
+
+        .btn-preset.active {
+            border-color: var(--accent-blue);
+            background-color: rgba(56, 189, 248, 0.22);
+            box-shadow: 0 0 0 1px var(--accent-blue);
+        }
+
+        .dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .control-group {
+            background-color: var(--bg-panel);
+            padding: 0.9rem;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+        }
+
+        .slider-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.85rem;
+            margin-bottom: 0.45rem;
+            color: var(--text-secondary);
+        }
+
+        .slider-header strong {
+            color: var(--text-primary);
+            font-family: var(--font-mono);
+        }
+
+        input[type="range"] {
+            width: 100%;
+            accent-color: var(--accent-blue);
+            cursor: pointer;
+        }
+
+        .transport-controls {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.65rem;
+        }
+
+        .btn-ctrl {
+            flex: 1;
+            padding: 0.55rem;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 0.85rem;
+            cursor: pointer;
+            transition: opacity 0.2s, transform 0.1s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.35rem;
+        }
+
+        .btn-ctrl:active { transform: scale(0.98); }
+        .btn-play { background-color: var(--accent-green); color: #064e3b; }
+        .btn-pause { background-color: var(--accent-amber); color: #451a03; }
+        .btn-reset { background-color: var(--border-color); color: var(--text-primary); }
+        .btn-primary { background-color: var(--accent-blue); color: #082f49; }
+
+        /* Strumenti & Canvas */
+        .canvas-wrapper {
+            width: 100%;
+            background-color: #020617;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            overflow: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        canvas {
+            display: block;
+            max-width: 100%;
+        }
+
+        .instrument-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            align-items: center;
+        }
+
+        .digital-readout {
+            background: #020617;
+            border: 2px solid #334155;
+            border-radius: 8px;
+            padding: 0.75rem;
+            text-align: center;
+            font-family: var(--font-mono);
+        }
+
+        .digital-value {
+            font-size: 1.7rem;
+            font-weight: 700;
+            color: var(--accent-green);
+            text-shadow: 0 0 8px rgba(16, 185, 129, 0.4);
+            margin: 0.15rem 0;
+        }
+
+        /* Box Didattico Contestuale */
+        .didactic-box {
+            background: linear-gradient(145deg, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.98));
+            border-left: 4px solid var(--accent-blue);
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+        }
+
+        .didactic-box h3 {
+            font-size: 0.98rem;
+            color: var(--accent-blue);
+            margin-bottom: 0.35rem;
+        }
+
+        .didactic-status {
+            font-weight: 700;
+            font-size: 1.05rem;
+            margin-bottom: 0.45rem;
+        }
+
+        .didactic-text {
+            font-size: 0.9rem;
+            color: #cbd5e1;
+            margin-bottom: 0.5rem;
+        }
+
+        .error-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.45rem;
+            margin-top: 0.5rem;
+        }
+
+        .etag {
+            font-size: 0.78rem;
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-weight: 600;
+        }
+
+        .etag-ok { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.35); }
+        .etag-warn { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.35); }
+        .etag-err { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.35); }
+
+        .stats-bar {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 0.5rem;
+            text-align: center;
+            background: var(--bg-panel);
+            padding: 0.65rem;
+            border-radius: 8px;
+            font-family: var(--font-mono);
+            font-size: 0.85rem;
+        }
+
+        .stats-bar span {
+            display: block;
+            color: var(--text-secondary);
+            font-size: 0.72rem;
+            font-family: var(--font-sans);
+        }
+
+        /* Quiz & Laboratorio */
+        .quiz-item {
+            background-color: var(--bg-panel);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 1rem;
+            margin-bottom: 0.85rem;
+        }
+
+        .quiz-question {
+            font-weight: 600;
+            margin-bottom: 0.6rem;
+            color: var(--text-primary);
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+        }
+
+        .quiz-opt {
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+            padding: 0.45rem 0.7rem;
+            border-radius: 6px;
+            background: rgba(30, 41, 59, 0.6);
+            cursor: pointer;
+            font-size: 0.9rem;
+            border: 1px solid transparent;
+        }
+
+        .quiz-opt:hover {
+            border-color: var(--border-color);
+        }
+
+        .quiz-opt.correct {
+            background: rgba(16, 185, 129, 0.2);
+            border-color: var(--accent-green);
+            color: #6ee7b7;
+        }
+
+        .quiz-opt.wrong {
+            background: rgba(239, 68, 68, 0.2);
+            border-color: var(--accent-red);
+            color: #fca5a5;
+        }
+
+        .lab-input {
+            width: 90px;
+            background: #020617;
+            border: 1px solid var(--accent-blue);
+            color: var(--accent-green);
+            font-family: var(--font-mono);
+            font-size: 0.95rem;
+            padding: 0.3rem 0.5rem;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .call-out {
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            border-radius: 8px;
+            padding: 0.85rem 1rem;
+            font-size: 0.9rem;
+            color: #fde68a;
+        }
+
+        ul.clean-list {
+            padding-left: 1.25rem;
+            color: #cbd5e1;
+            font-size: 0.92rem;
+        }
+
+        ul.clean-list li {
+            margin-bottom: 0.35rem;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="header-top">
+            <div class="header-title">
+                <h1>Elettronica &amp; Misure: Errori, Accuratezza e Precisione</h1>
+                <p>Unità Didattica Interattiva • Classe Terza ITIS Elettronica ed Elettrotecnica</p>
+            </div>
+            <span class="class-badge">Durata: 2-3 Ore (Teoria + Lab)</span>
+        </div>
+
+        <!-- Navigazione strutturata secondo la scaletta della lezione -->
+        <nav class="lesson-nav" id="lessonNav">
+            <button class="nav-tab active" data-target="mod-1">1. Intro &amp; Tipi di Errore <span class="nav-time">40 min</span></button>
+            <button class="nav-tab" data-target="mod-2">2. Errore di Parallasse <span class="nav-time">10 min</span></button>
+            <button class="nav-tab" data-target="mod-3">3. Accuratezza e Precisione (Bersaglio) <span class="nav-time">20 min</span></button>
+            <button class="nav-tab" data-target="mod-4">4. Laboratorio Multimetro <span class="nav-time">25 min</span></button>
+            <button class="nav-tab" data-target="mod-5">5. Verifica &amp; Schema Quaderno <span class="nav-time">25 min</span></button>
+        </nav>
+    </header>
+
+    <main>
+        <!-- =====================================================================
+             MODULO 1: INTRODUZIONE, ERRORI SISTEMATICI E ERRORI ACCIDENTALI
+             ===================================================================== -->
+        <section id="mod-1" class="module-section active">
+            <div class="two-col-grid">
+                <!-- Colonna Sinistra: Domanda stimolo e confronto -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Perché nessuna misura è mai esatta?</h2>
+                        <span class="pill">Introduzione (10 min)</span>
+                    </div>
+
+                    <div class="call-out">
+                        <strong>Domanda alla classe:</strong> «Se misuro con un multimetro la tensione ai capi di una batteria e leggo <strong>9,02 V</strong>, posso affermare che la tensione reale sia esattamente 9,02 V?»<br>
+                        <strong>Risposta: No.</strong> Il valore letto è sempre una <em>stima</em> del valore vero.
+                    </div>
+
+                    <div class="formula-box">
+                        X<sub>m</sub> = X<sub>v</sub> + e
+                        <div class="formula-caption">
+                            • <strong>X<sub>m</sub></strong>: valore misurato dallo strumento<br>
+                            • <strong>X<sub>v</sub></strong>: valore di riferimento (valore vero)<br>
+                            • <strong>e</strong>: errore di misura (obiettivo: riconoscerlo e ridurlo)
+                        </div>
+                    </div>
+
+                    <h3 style="font-size: 1rem; color: var(--accent-blue); margin-top: 0.25rem;">Confronto: Sistematici vs Accidentali</h3>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Caratteristica</th>
+                                <th>Errori Sistematici</th>
+                                <th>Errori Accidentali (Casuali)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><strong>Andamento</strong></td>
+                                <td>Prevedibile (sempre + o sempre −)</td>
+                                <td>Imprevedibile (oscilla casualmente)</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Cause tipiche</strong></td>
+                                <td>Staratura, errore di zero, deriva termica, resistenza interna</td>
+                                <td>Rumore elettrico, disturbi EM, vibrazioni, instabilità</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Come si riduce</strong></td>
+                                <td><strong>Taratura</strong> e correzione dello strumento</td>
+                                <td><strong>Ripetizione</strong> delle misure e calcolo della <strong>media</strong></td>
+                            </tr>
+                            <tr>
+                                <td><strong>Regola d'oro</strong></td>
+                                <td><em>«Sbaglio sempre nello stesso modo»</em></td>
+                                <td><em>«Sbaglio in modo diverso ogni volta»</em></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Colonna Destra: Simulatore interattivo di confronto -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Simulatore Interattivo: Effetto della Media sulle Misure</h2>
+                        <span class="pill">Laboratorio Virtuale</span>
+                    </div>
+
+                    <p style="font-size: 0.88rem; color: var(--text-secondary);">
+                        Attiva o disattiva i due tipi di errore su una tensione di riferimento <strong>V<sub>v</sub> = 10,00 V</strong> e osserva come si comporta la media aritmetica su 5 misure ripetute.
+                    </p>
+
+                    <div class="control-group" style="display: flex; flex-direction: column; gap: 0.75rem;">
+                        <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                            <span><strong>Errore Sistematico (+0,20 V):</strong> Strumento starato</span>
+                            <input type="checkbox" id="chkSysErr" checked style="width: 18px; height: 18px; accent-color: var(--accent-amber);">
+                        </label>
+                        <label style="display: flex; align-items: center; justify-content: space-between; cursor: pointer;">
+                            <span><strong>Errore Accidentale (±0,03 V):</strong> Disturbi casuali</span>
+                            <input type="checkbox" id="chkAccErr" checked style="width: 18px; height: 18px; accent-color: var(--accent-blue);">
+                        </label>
+                        <button class="btn-ctrl btn-primary" id="btnGen5Samples">↻ Acquisisci Nuova Serie di 5 Misure</button>
+                    </div>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Misura #</th>
+                                <th>Valore Vero (V<sub>v</sub>)</th>
+                                <th>Valore Rilevato (V<sub>m</sub>)</th>
+                                <th>Scarto (V<sub>m</sub> − V<sub>v</sub>)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="fiveSamplesBody"></tbody>
+                    </table>
+
+                    <div class="formula-box" style="font-size: 0.95rem;">
+                        X<sub>medio</sub> = (x<sub>1</sub> + x<sub>2</sub> + x<sub>3</sub> + x<sub>4</sub> + x<sub>5</sub>) / 5 = <strong id="calcMeanResult">10,20 V</strong>
+                        <div class="formula-caption" id="meanDidacticNote">
+                            <strong>Attenzione didattica:</strong> La media annulla le oscillazioni casuali (±0,03 V), ma <strong>non elimina l'errore sistematico (+0,20 V)</strong>!
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             MODULO 2: ERRORE DI PARALLASSE (STRUMENTO ANALOGICO INTERATTIVO)
+             ===================================================================== -->
+        <section id="mod-2" class="module-section">
+            <div class="two-col-grid">
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Simulatore Ottico: L'Errore di Parallasse</h2>
+                        <span class="pill">Dimostrazione (10 min)</span>
+                    </div>
+
+                    <p style="font-size: 0.9rem; color: #cbd5e1;">
+                        Sposta il punto di vista dell'osservatore (a sinistra, frontale o a destra) rispetto a un amperometro analogico la cui lancetta indica realmente <strong>2,00 A</strong>.
+                    </p>
+
+                    <div class="control-group">
+                        <div class="slider-header">
+                            <span>Angolo di osservazione dell'occhio:</span>
+                            <strong id="parallaxAngleLabel">0° (Frontale — Lettura Corretta)</strong>
+                        </div>
+                        <input type="range" id="parallaxSlider" min="-35" max="35" value="0" step="1">
+                        
+                        <div class="transport-controls">
+                            <button class="btn-ctrl btn-reset" onclick="setParallax(-28)">👁️ Da Sinistra</button>
+                            <button class="btn-ctrl btn-play" onclick="setParallax(0)">🎯 Frontale (90°)</button>
+                            <button class="btn-ctrl btn-reset" onclick="setParallax(28)">👁️ Da Destra</button>
+                        </div>
+
+                        <label style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.85rem; font-size: 0.88rem; cursor: pointer;">
+                            <input type="checkbox" id="chkMirrorScale" checked style="width: 16px; height: 16px; accent-color: var(--accent-blue);">
+                            <span>Mostra <strong>specchio antiparallasse</strong> sul quadrante</span>
+                        </label>
+                    </div>
+
+                    <div class="didactic-box">
+                        <h3>🔍 Come evitare l'errore di parallasse</h3>
+                        <ul class="clean-list">
+                            <li>Posizionare l'occhio <strong>perpendicolarmente</strong> al quadrante.</li>
+                            <li>Se lo strumento ha lo <strong>specchio graduato</strong>, allineare l'occhio finché la lancetta copre esattamente la propria immagine riflessa.</li>
+                            <li><strong>Nota importante:</strong> È un errore dell'operatore in fase di lettura, non un difetto interno dello strumento.</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Vista Quadrante &amp; Proiezione Geometrica</h2>
+                        <span class="pill" id="parallaxReadingBadge">Lettura Apparente: 2,00 A</span>
+                    </div>
+
+                    <div class="canvas-wrapper">
+                        <canvas id="parallaxCanvas" width="520" height="360"></canvas>
+                    </div>
+
+                    <div class="stats-bar">
+                        <div class="stat-item">
+                            <span>Corrente Reale</span>
+                            <strong style="color: var(--accent-green);">2,00 A</strong>
+                        </div>
+                        <div class="stat-item">
+                            <span>Valore Letto dall'Occhio</span>
+                            <strong id="parallaxApparentVal" style="color: var(--accent-amber);">2,00 A</strong>
+                        </div>
+                        <div class="stat-item">
+                            <span>Errore di Parallasse</span>
+                            <strong id="parallaxErrVal" style="color: var(--accent-red);">0,00 A</strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             MODULO 3: ACCURATEZZA E PRECISIONE (BERSAGLIO, DARDI E GRAFICO)
+             ===================================================================== -->
+        <section id="mod-3" class="module-section">
+            <div class="two-col-grid">
+                <!-- Colonna Sinistra: Controlli 4 casi, Slider, Strumento e Bersaglio -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>1. Strumento &amp; Bersaglio (8 Dardi)</h2>
+                        <span class="pill" id="sampleCounterBadge">Campioni: 0 / 8</span>
+                    </div>
+
+                    <!-- Pulsanti rapidi per i 4 casi principali -->
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.4rem;">Seleziona uno dei 4 casi fondamentali:</div>
+                        <div class="presets-grid">
+                            <button class="btn-preset active" data-case="0">
+                                <span class="dot" style="background: var(--accent-green);"></span>
+                                Strumento accurato e preciso
+                            </button>
+                            <button class="btn-preset" data-case="1">
+                                <span class="dot" style="background: var(--accent-amber);"></span>
+                                Strumento non accurato ma preciso
+                            </button>
+                            <button class="btn-preset" data-case="2">
+                                <span class="dot" style="background: var(--accent-blue);"></span>
+                                Strumento accurato ma non preciso
+                            </button>
+                            <button class="btn-preset" data-case="3">
+                                <span class="dot" style="background: var(--accent-red);"></span>
+                                Strumento nè accurato nè preciso
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Slider continuo e controlli Play / Pausa / Reset -->
+                    <div class="control-group">
+                        <div class="slider-header">
+                            <span>Arco dei Dardi (Transizione continua):</span>
+                            <strong id="sliderLabel">0% — Accurato e preciso</strong>
+                        </div>
+                        <input type="range" id="regimeSlider" min="0" max="300" value="0" step="1">
+                        
+                        <div class="transport-controls">
+                            <button class="btn-ctrl btn-play" id="btnPlay">▶ Play</button>
+                            <button class="btn-ctrl btn-pause" id="btnPause">⏸ Pausa</button>
+                            <button class="btn-ctrl btn-reset" id="btnReset">↺ Reset</button>
+                        </div>
+                    </div>
+
+                    <!-- Strumento Analogico + Digitale -->
+                    <div class="instrument-row">
+                        <div class="canvas-wrapper" style="height: 115px;">
+                            <canvas id="analogMeterCanvas" width="230" height="115"></canvas>
+                        </div>
+                        <div class="digital-readout">
+                            <div style="font-size: 0.7rem; color: var(--text-secondary);">MULTIMETRO DIGITALE</div>
+                            <div class="digital-value" id="digitalValue">5.00 V</div>
+                            <div style="font-size: 0.75rem; color: var(--accent-blue);">Valore Vero (V<sub>v</sub>): <strong>5.00 V</strong></div>
+                        </div>
+                    </div>
+
+                    <!-- Simulatore Microscopico / Bersaglio con 8 dardi -->
+                    <div>
+                        <div style="font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 0.3rem; display: flex; justify-content: space-between;">
+                            <span>Vista Bersaglio (8 Dardi / Letture):</span>
+                            <span style="color: var(--accent-blue);">Centro = 5,00 V</span>
+                        </div>
+                        <div class="canvas-wrapper">
+                            <canvas id="targetCanvas" width="460" height="260"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Colonna Destra: Grafico nel tempo e Box Didattico -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>2. Analisi Grafica &amp; Diagnosi</h2>
+                        <span class="pill">Tensione DC (5,00 V)</span>
+                    </div>
+
+                    <div class="canvas-wrapper">
+                        <canvas id="chartCanvas" width="540" height="245"></canvas>
+                    </div>
+
+                    <div class="stats-bar">
+                        <div class="stat-item">
+                            <span>Media Misure (V<sub>m</sub>)</span>
+                            <strong id="statMean" style="color: var(--accent-amber);">5.00 V</strong>
+                        </div>
+                        <div class="stat-item">
+                            <span>Errore Sistematico (Bias)</span>
+                            <strong id="statBias" style="color: var(--accent-red);">0.00 V</strong>
+                        </div>
+                        <div class="stat-item">
+                            <span>Dispersione Accidentale</span>
+                            <strong id="statDispersion" style="color: var(--accent-blue);">±0.03 V</strong>
+                        </div>
+                    </div>
+
+                    <!-- Box Didattico Contestuale ("Cosa sta succedendo?") -->
+                    <div class="didactic-box">
+                        <h3>💡 Cosa sta succedendo?</h3>
+                        <div class="didactic-status" id="didacticTitle">Strumento accurato e preciso</div>
+                        <p class="didactic-text" id="didacticDesc">
+                            Tutti gli 8 dardi colpiscono il centro del bersaglio e sono strettamente raggruppati tra loro. Il multimetro legge valori vicinissimi al valore vero (5,00 V) con oscillazioni minime.
+                        </p>
+                        <p class="didactic-text" id="didacticPhysics">
+                            <strong>Causa fisica:</strong> Lo strumento è correttamente tarato (zero calibrato) e non risente di disturbi elettromagnetici significativi.
+                        </p>
+                        <div class="error-tags" id="errorTags">
+                            <span class="etag etag-ok">Errore Sistematico: Assente / Trascurabile</span>
+                            <span class="etag etag-ok">Errore Accidentale: Minimo</span>
+                        </div>
+                    </div>
+
+                    <div class="call-out" style="font-size: 0.84rem;">
+                        <strong>Messaggio chiave da ricordare:</strong> Uno strumento può essere <em>molto preciso</em> (letture quasi identiche tra loro) ma fornire misure <em>sistematicamente sbagliate</em> (non accurato). Inoltre, <strong>risoluzione ≠ accuratezza</strong>!
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             MODULO 4: ESEMPI APPLICATIVI & SCHEDA DI LABORATORIO (5 V)
+             ===================================================================== -->
+        <section id="mod-4" class="module-section">
+            <div class="two-col-grid">
+                <!-- Esempio applicato all'elettronica (12 V) -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Esempio Applicato: Confronto tra 3 Strumenti (V<sub>v</sub> = 12,00 V)</h2>
+                        <span class="pill">Analisi Dati</span>
+                    </div>
+
+                    <p style="font-size: 0.88rem; color: #cbd5e1;">
+                        Misuriamo una tensione stabilizzata di riferimento pari a <strong>12,00 V</strong> con tre diversi voltmetri da banco:
+                    </p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Misura</th>
+                                <th>Strumento A</th>
+                                <th>Strumento B</th>
+                                <th>Strumento C</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>12,01 V</td>
+                                <td>12,50 V</td>
+                                <td>11,50 V</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>11,99 V</td>
+                                <td>12,51 V</td>
+                                <td>12,70 V</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>12,00 V</td>
+                                <td>12,49 V</td>
+                                <td>11,80 V</td>
+                            </tr>
+                            <tr style="background: rgba(56, 189, 248, 0.08); font-weight: bold;">
+                                <td>Media</td>
+                                <td style="color: var(--accent-green);">12,00 V</td>
+                                <td style="color: var(--accent-amber);">12,50 V</td>
+                                <td style="color: var(--accent-blue);">12,00 V</td>
+                            </tr>
+                        </tbody>
+                    </table>
+
+                    <div class="didactic-box">
+                        <h3>📊 Interpretazione Metrologica</h3>
+                        <ul class="clean-list">
+                            <li><strong>Strumento A:</strong> <span style="color: var(--accent-green);">Accurato e preciso</span> (valori vicini tra loro e al valore vero).</li>
+                            <li><strong>Strumento B:</strong> <span style="color: var(--accent-amber);">Preciso ma non accurato</span> (errore sistematico di +0,50 V).</li>
+                            <li><strong>Strumento C:</strong> <span style="color: var(--accent-blue);">Media accurata, ma scarsa precisione</span> (forte dispersione casuale).</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Attività pratica di laboratorio (5 V) -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Scheda Laboratorio: Verifica Multimetro Digitale</h2>
+                        <span class="pill">Attività Pratica</span>
+                    </div>
+
+                    <p style="font-size: 0.86rem; color: var(--text-secondary);">
+                        <strong>Procedura:</strong> Imposta l'alimentatore stabilizzato a <strong>5,00 V</strong> (verificati con multimetro calibrato di riferimento) e inserisci le 5 letture del multimetro in prova nella tabella sottostante per calcolare automaticamente media, precisione e accuratezza.
+                    </p>
+
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Numero misura</th>
+                                <th>Tensione rilevata (V)</th>
+                                <th>Scarto dal riferimento (5,00 V)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="labTableBody">
+                            <tr><td>Misura 1</td><td><input type="number" step="0.01" value="5.12" class="lab-input" oninput="updateLabCalc()"></td><td class="lab-diff">+0,12 V</td></tr>
+                            <tr><td>Misura 2</td><td><input type="number" step="0.01" value="5.14" class="lab-input" oninput="updateLabCalc()"></td><td class="lab-diff">+0,14 V</td></tr>
+                            <tr><td>Misura 3</td><td><input type="number" step="0.01" value="5.11" class="lab-input" oninput="updateLabCalc()"></td><td class="lab-diff">+0,11 V</td></tr>
+                            <tr><td>Misura 4</td><td><input type="number" step="0.01" value="5.13" class="lab-input" oninput="updateLabCalc()"></td><td class="lab-diff">+0,13 V</td></tr>
+                            <tr><td>Misura 5</td><td><input type="number" step="0.01" value="5.15" class="lab-input" oninput="updateLabCalc()"></td><td class="lab-diff">+0,15 V</td></tr>
+                        </tbody>
+                    </table>
+
+                    <div class="stats-bar">
+                        <div class="stat-item">
+                            <span>Media Calcolata</span>
+                            <strong id="labMeanVal" style="color: var(--accent-green);">5,13 V</strong>
+                        </div>
+                        <div class="stat-item">
+                            <span>Semidispersione (Precisione)</span>
+                            <strong id="labPrecVal" style="color: var(--accent-blue);">±0,02 V</strong>
+                        </div>
+                        <div class="stat-item">
+                            <span>Errore Sistematico</span>
+                            <strong id="labAccVal" style="color: var(--accent-amber);">+0,13 V</strong>
+                        </div>
+                    </div>
+
+                    <div class="didactic-box" id="labDiagnosisBox">
+                        <h3>🔬 Diagnosi Automatica del Multimetro</h3>
+                        <p class="didactic-text" id="labDiagnosisText">
+                            Lo strumento presenta un <strong>errore sistematico di +0,13 V</strong> (scarsa accuratezza), ma le misure sono molto vicine tra loro (<strong>alta precisione</strong>).
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- =====================================================================
+             MODULO 5: VERIFICA FINALE (6 DOMANDE) & SCHEMA DA QUADERNO
+             ===================================================================== -->
+        <section id="mod-5" class="module-section">
+            <div class="two-col-grid">
+                <!-- Test di apprendimento -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Verifica Rapida: Test di Apprendimento</h2>
+                        <span class="pill" id="quizScoreBadge">Punteggio: 0 / 6</span>
+                    </div>
+
+                    <div id="quizContainer"></div>
+
+                    <div style="display: flex; gap: 0.75rem;">
+                        <button class="btn-ctrl btn-play" id="btnCheckQuiz">✓ Correggi le risposte</button>
+                        <button class="btn-ctrl btn-reset" id="btnResetQuiz">↺ Azzera Test</button>
+                    </div>
+                </div>
+
+                <!-- Schema riassuntivo da lasciare sul quaderno -->
+                <div class="card">
+                    <div class="card-header">
+                        <h2>Schema Riassuntivo per il Quaderno</h2>
+                        <span class="pill">Sintesi Finale</span>
+                    </div>
+
+                    <div class="didactic-box" style="border-left-color: var(--accent-amber);">
+                        <h3 style="color: var(--accent-amber);">1. Gli Errori di Misura</h3>
+                        <ul class="clean-list">
+                            <li><strong>Errori Sistematici:</strong> Si ripetono con andamento prevedibile; provocano uno scostamento nella stessa direzione; si riducono con <em>taratura e correzione</em>.</li>
+                            <li><strong>Errori Accidentali:</strong> Sono imprevedibili; producono variazioni casuali tra misure ripetute; si riducono <em>ripetendo le misure e calcolando la media</em>.</li>
+                            <li><strong>Errore di Parallasse:</strong> Errore di lettura dovuto all'osservazione obliqua di una scala analogica (si evita guardando perpendicolarmente).</li>
+                        </ul>
+                    </div>
+
+                    <div class="didactic-box" style="border-left-color: var(--accent-green);">
+                        <h3 style="color: var(--accent-green);">2. Le Caratteristiche di Misura</h3>
+                        <ul class="clean-list">
+                            <li><strong>Accuratezza:</strong> Indica quanto una misura (o la media) è vicina al <em>valore di riferimento</em>.</li>
+                            <li><strong>Precisione:</strong> Indica quanto le misure ripetute nelle stesse condizioni sono <em>vicine tra loro</em>.</li>
+                        </ul>
+                    </div>
+
+                    <div class="call-out">
+                        <strong>Precisazione Metrologica Moderna:</strong><br>
+                        L'<strong>errore</strong> è la differenza tra valore misurato e valore di riferimento; l'<strong>incertezza di misura</strong> esprime invece il dubbio quantitativo associato al risultato. Inoltre, avere tante cifre sul display (alta <em>risoluzione</em>) non garantisce che lo strumento sia accurato!
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <script>
+        /**
+         * =========================================================================
+         * LOGICA APPLICAZIONE DIDATTICA - ELETTRONICA 3ª ITIS
+         * =========================================================================
+         */
+        (() => {
+            // --- 1. GESTIONE NAVIGAZIONE MODULI SCALETTA ---
+            const navTabs = document.querySelectorAll('.nav-tab');
+            const sections = document.querySelectorAll('.module-section');
+
+            navTabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    navTabs.forEach(t => t.classList.remove('active'));
+                    sections.forEach(s => s.classList.remove('active'));
+                    tab.classList.add('active');
+                    document.getElementById(tab.dataset.target).classList.add('active');
+                });
+            });
+
+            // --- 2. MODULO 1: SIMULATORE 5 MISURE & MEDIA ---
+            const chkSysErr = document.getElementById('chkSysErr');
+            const chkAccErr = document.getElementById('chkAccErr');
+            const btnGen5Samples = document.getElementById('btnGen5Samples');
+            const fiveSamplesBody = document.getElementById('fiveSamplesBody');
+            const calcMeanResult = document.getElementById('calcMeanResult');
+            const meanDidacticNote = document.getElementById('meanDidacticNote');
+
+            function generateFiveSamples() {
+                const vTrue = 10.00;
+                const sysOffset = chkSysErr.checked ? 0.20 : 0.00;
+                const baseOffsets = [0.01, -0.01, 0.02, -0.02, 0.00];
+                const shuffled = baseOffsets.sort(() => Math.random() - 0.5);
+
+                let rowsHtml = '';
+                let sum = 0;
+
+                shuffled.forEach((noise, idx) => {
+                    const acc = chkAccErr.checked ? noise : 0.00;
+                    const val = vTrue + sysOffset + acc;
+                    const diff = val - vTrue;
+                    sum += val;
+
+                    rowsHtml += `
+                        <tr>
+                            <td>Misura ${idx + 1}</td>
+                            <td>10,00 V</td>
+                            <td style="font-family: var(--font-mono); font-weight: bold;">${val.toFixed(2).replace('.', ',')} V</td>
+                            <td style="font-family: var(--font-mono); color: ${Math.abs(diff) > 0.05 ? 'var(--accent-amber)' : 'var(--accent-green)'};">
+                                ${diff >= 0 ? '+' : ''}${diff.toFixed(2).replace('.', ',')} V
+                            </td>
+                        </tr>
+                    `;
+                });
+
+                const mean = sum / 5;
+                fiveSamplesBody.innerHTML = rowsHtml;
+                calcMeanResult.textContent = `${mean.toFixed(2).replace('.', ',')} V`;
+
+                if (chkSysErr.checked && chkAccErr.checked) {
+                    meanDidacticNote.innerHTML = `<strong>Attenzione didattica:</strong> La media annulla gli errori accidentali (±0,02 V), ma <strong>non elimina l'errore sistematico (+0,20 V)</strong>!`;
+                } else if (chkSysErr.checked && !chkAccErr.checked) {
+                    meanDidacticNote.innerHTML = `<strong>Solo errore sistematico:</strong> Le 5 misure sono identiche (10,20 V), quindi la media resta 10,20 V. Serve ricalibrare lo strumento.`;
+                } else if (!chkSysErr.checked && chkAccErr.checked) {
+                    meanDidacticNote.innerHTML = `<strong>Solo errore accidentale:</strong> Le misure oscillano attorno a 10,00 V e la media restituisce esattamente il valore vero (10,00 V)!`;
+                } else {
+                    meanDidacticNote.innerHTML = `<strong>Condizione ideale:</strong> Assenza di errori significativi, ogni misura coincide con 10,00 V.`;
+                }
+            }
+
+            chkSysErr.addEventListener('change', generateFiveSamples);
+            chkAccErr.addEventListener('change', generateFiveSamples);
+            btnGen5Samples.addEventListener('click', generateFiveSamples);
+            generateFiveSamples();
+
+            // --- 3. MODULO 2: SIMULATORE ERRORE DI PARALLASSE ---
+            const parallaxCanvas = document.getElementById('parallaxCanvas');
+            const pCtx = parallaxCanvas.getContext('2d');
+            const parallaxSlider = document.getElementById('parallaxSlider');
+            const parallaxAngleLabel = document.getElementById('parallaxAngleLabel');
+            const parallaxReadingBadge = document.getElementById('parallaxReadingBadge');
+            const parallaxApparentVal = document.getElementById('parallaxApparentVal');
+            const parallaxErrVal = document.getElementById('parallaxErrVal');
+            const chkMirrorScale = document.getElementById('chkMirrorScale');
+
+            window.setParallax = (deg) => {
+                parallaxSlider.value = deg;
+                drawParallaxSimulation();
+            };
+
+            function drawParallaxSimulation() {
+                const angleDeg = Number(parallaxSlider.value);
+                const showMirror = chkMirrorScale.checked;
+                const w = parallaxCanvas.width;
+                const h = parallaxCanvas.height;
+
+                pCtx.clearRect(0, 0, w, h);
+
+                const trueCurrent = 2.00;
+                const rad = (angleDeg * Math.PI) / 180;
+                const apparentShiftA = Math.tan(rad) * 0.55;
+                const apparentCurrent = trueCurrent + apparentShiftA;
+                const errorA = apparentCurrent - trueCurrent;
+
+                let posDesc = "Frontale — Lettura Corretta";
+                if (angleDeg < -4) posDesc = "Spostato a Sinistra";
+                if (angleDeg > 4) posDesc = "Spostato a Destra";
+
+                parallaxAngleLabel.textContent = `${angleDeg > 0 ? '+' : ''}${angleDeg}° (${posDesc})`;
+                parallaxReadingBadge.textContent = `Lettura Apparente: ${apparentCurrent.toFixed(2).replace('.', ',')} A`;
+                parallaxApparentVal.textContent = `${apparentCurrent.toFixed(2).replace('.', ',')} A`;
+                parallaxErrVal.textContent = `${errorA >= 0 ? '+' : ''}${errorA.toFixed(2).replace('.', ',')} A`;
+
+                // --- PARTE SUPERIORE: VISTA IN SEZIONE ---
+                const scaleY = 175;
+                const needleY = 142;
+                const eyeY = 48;
+                const centerX = w / 2;
+                const eyeX = centerX + Math.sin(rad) * 165;
+
+                pCtx.fillStyle = '#0f172a';
+                pCtx.fillRect(15, 12, w - 30, 185);
+                pCtx.strokeStyle = '#334155';
+                pCtx.strokeRect(15, 12, w - 30, 185);
+
+                pCtx.fillStyle = '#94a3b8';
+                pCtx.font = '11px Segoe UI, sans-serif';
+                pCtx.textAlign = 'left';
+                pCtx.fillText('VISTA IN SEZIONE (Dall\'alto):', 25, 30);
+
+                pCtx.strokeStyle = '#64748b';
+                pCtx.lineWidth = 4;
+                pCtx.beginPath();
+                pCtx.moveTo(70, scaleY);
+                pCtx.lineTo(w - 70, scaleY);
+                pCtx.stroke();
+
+                const pxPerAmp = 140;
+                for (let a = 1.0; a <= 3.01; a += 0.2) {
+                    const tx = centerX + (a - 2.0) * pxPerAmp;
+                    pCtx.beginPath();
+                    pCtx.moveTo(tx, scaleY - 6);
+                    pCtx.lineTo(tx, scaleY + 4);
+                    pCtx.strokeStyle = Math.abs(a - 2.0) < 0.01 ? '#10b981' : '#94a3b8';
+                    pCtx.lineWidth = Math.abs(a - 2.0) < 0.01 ? 2.5 : 1.2;
+                    pCtx.stroke();
+
+                    if (Math.abs((a * 10) % 5) < 0.1) {
+                        pCtx.fillStyle = '#cbd5e1';
+                        pCtx.textAlign = 'center';
+                        pCtx.font = '10px Consolas, monospace';
+                        pCtx.fillText(`${a.toFixed(1)}A`, tx, scaleY + 16);
+                    }
+                }
+
+                pCtx.beginPath();
+                pCtx.arc(centerX, needleY, 5, 0, Math.PI * 2);
+                pCtx.fillStyle = '#ef4444';
+                pCtx.fill();
+
+                const slope = (needleY - eyeY) / (centerX - eyeX || 0.0001);
+                const projX = centerX + (scaleY - needleY) / slope;
+
+                pCtx.beginPath();
+                pCtx.moveTo(eyeX, eyeY);
+                pCtx.lineTo(projX, scaleY);
+                pCtx.strokeStyle = Math.abs(angleDeg) <= 2 ? '#10b981' : '#f59e0b';
+                pCtx.setLineDash([5, 4]);
+                pCtx.lineWidth = 2;
+                pCtx.stroke();
+                pCtx.setLineDash([]);
+
+                pCtx.beginPath();
+                pCtx.arc(projX, scaleY, 5, 0, Math.PI * 2);
+                pCtx.fillStyle = '#f59e0b';
+                pCtx.fill();
+
+                pCtx.save();
+                pCtx.translate(eyeX, eyeY);
+                pCtx.fillStyle = '#38bdf8';
+                pCtx.beginPath();
+                pCtx.ellipse(0, 0, 14, 8, 0, 0, Math.PI * 2);
+                pCtx.fill();
+                pCtx.beginPath();
+                pCtx.arc(0, 0, 4, 0, Math.PI * 2);
+                pCtx.fillStyle = '#020617';
+                pCtx.fill();
+                pCtx.fillStyle = '#f8fafc';
+                pCtx.font = 'bold 11px Segoe UI';
+                pCtx.textAlign = 'center';
+                pCtx.fillText('Occhio', 0, -13);
+                pCtx.restore();
+
+                // --- PARTE INFERIORE: COSA VEDE L'OPERATORE SUL QUADRANTE ---
+                const dialY = 212;
+                pCtx.fillStyle = '#0f172a';
+                pCtx.fillRect(15, dialY, w - 30, 132);
+                pCtx.strokeStyle = '#334155';
+                pCtx.strokeRect(15, dialY, w - 30, 132);
+
+                pCtx.fillStyle = '#94a3b8';
+                pCtx.textAlign = 'left';
+                pCtx.font = '11px Segoe UI, sans-serif';
+                pCtx.fillText('CIÒ CHE VEDI SUL QUADRANTE DELL\'AMPEROMETRO:', 25, dialY + 18);
+
+                const scaleBarY = dialY + 62;
+                if (showMirror) {
+                    pCtx.fillStyle = 'rgba(148, 163, 184, 0.25)';
+                    pCtx.fillRect(70, scaleBarY + 6, w - 140, 14);
+                    pCtx.fillStyle = '#94a3b8';
+                    pCtx.font = '9px Segoe UI';
+                    pCtx.fillText('Specchio antiparallasse', 74, scaleBarY + 16);
+                }
+
+                for (let a = 1.0; a <= 3.01; a += 0.1) {
+                    const tx = centerX + (a - 2.0) * pxPerAmp;
+                    const isMajor = Math.abs((a * 10) % 5) < 0.1;
+                    pCtx.beginPath();
+                    pCtx.moveTo(tx, scaleBarY - (isMajor ? 12 : 6));
+                    pCtx.lineTo(tx, scaleBarY);
+                    pCtx.strokeStyle = Math.abs(a - 2.0) < 0.01 ? '#10b981' : '#cbd5e1';
+                    pCtx.lineWidth = isMajor ? 2 : 1;
+                    pCtx.stroke();
+
+                    if (isMajor) {
+                        pCtx.fillStyle = '#f8fafc';
+                        pCtx.textAlign = 'center';
+                        pCtx.font = '11px Consolas, monospace';
+                        pCtx.fillText(`${a.toFixed(1)} A`, tx, scaleBarY - 17);
+                    }
+                }
+
+                const apparentNeedleX = centerX + apparentShiftA * pxPerAmp;
+                if (showMirror) {
+                    const mirrorX = centerX - apparentShiftA * pxPerAmp;
+                    pCtx.strokeStyle = 'rgba(239, 68, 68, 0.45)';
+                    pCtx.lineWidth = 3;
+                    pCtx.beginPath();
+                    pCtx.moveTo(mirrorX, scaleBarY + 6);
+                    pCtx.lineTo(mirrorX, scaleBarY + 22);
+                    pCtx.stroke();
+                }
+
+                pCtx.strokeStyle = '#ef4444';
+                pCtx.lineWidth = 3.5;
+                pCtx.beginPath();
+                pCtx.moveTo(apparentNeedleX, scaleBarY - 14);
+                pCtx.lineTo(apparentNeedleX, scaleBarY + 46);
+                pCtx.stroke();
+
+                pCtx.textAlign = 'center';
+                pCtx.font = 'bold 12px Segoe UI';
+                if (Math.abs(angleDeg) <= 2) {
+                    pCtx.fillStyle = '#10b981';
+                    pCtx.fillText('✓ Allineamento perfetto! Lancetta e riflesso coincidono (2,00 A)', centerX, dialY + 122);
+                } else {
+                    pCtx.fillStyle = '#f59e0b';
+                    pCtx.fillText(`⚠ Errore di parallasse! Leggi ${apparentCurrent.toFixed(2).replace('.', ',')} A invece di 2,00 A`, centerX, dialY + 122);
+                }
+            }
+
+            parallaxSlider.addEventListener('input', drawParallaxSimulation);
+            chkMirrorScale.addEventListener('change', drawParallaxSimulation);
+            drawParallaxSimulation();
+
+            // --- 4. MODULO 3: SIMULATORE ACCURATEZZA, PRECISIONE & BERSAGLIO ---
+            const TRUE_VALUE = 5.00;
+            const MAX_DARTS = 8;
+            const SAMPLE_INTERVAL = 900;
+
+            const NORMALIZED_NOISE = [
+                { nx:  0.15, ny: -0.20, nv:  0.12 },
+                { nx: -0.75, ny:  0.45, nv: -0.78 },
+                { nx:  0.82, ny:  0.30, nv:  0.85 },
+                { nx: -0.25, ny: -0.80, nv: -0.30 },
+                { nx:  0.40, ny:  0.75, nv:  0.42 },
+                { nx: -0.85, ny: -0.35, nv: -0.82 },
+                { nx:  0.60, ny: -0.65, nv:  0.65 },
+                { nx: -0.12, ny:  0.50, nv: -0.14 }
+            ];
+
+            const state = {
+                sliderVal: 0,
+                biasV: 0.0,
+                dispersionV: 0.03,
+                isPlaying: true,
+                lastSampleTime: 0,
+                darts: [],
+                currentVoltage: 5.00,
+                needleAngle: 0,
+                targetNeedleAngle: 0,
+                activeCaseIndex: 0
+            };
+
+            const targetCanvas = document.getElementById('targetCanvas');
+            const targetCtx = targetCanvas.getContext('2d');
+            const chartCanvas = document.getElementById('chartCanvas');
+            const chartCtx = chartCanvas.getContext('2d');
+            const analogCanvas = document.getElementById('analogMeterCanvas');
+            const analogCtx = analogCanvas.getContext('2d');
+
+            const regimeSlider = document.getElementById('regimeSlider');
+            const sliderLabel = document.getElementById('sliderLabel');
+            const digitalValueEl = document.getElementById('digitalValue');
+            const sampleCounterBadge = document.getElementById('sampleCounterBadge');
+
+            const statMeanEl = document.getElementById('statMean');
+            const statBiasEl = document.getElementById('statBias');
+            const statDispersionEl = document.getElementById('statDispersion');
+
+            const didacticTitle = document.getElementById('didacticTitle');
+            const didacticDesc = document.getElementById('didacticDesc');
+            const didacticPhysics = document.getElementById('didacticPhysics');
+            const errorTags = document.getElementById('errorTags');
+
+            const presetButtons = document.querySelectorAll('.btn-preset');
+            const btnPlay = document.getElementById('btnPlay');
+            const btnPause = document.getElementById('btnPause');
+            const btnReset = document.getElementById('btnReset');
+
+            const DIDACTIC_CASES = [
+                {
+                    title: "Strumento accurato e preciso",
+                    desc: "Tutti gli 8 dardi colpiscono il centro del bersaglio e sono strettamente raggruppati tra loro. Il multimetro misura valori vicinissimi al valore vero (5,00 V) con scarti minimi.",
+                    physics: "Causa fisica: Lo strumento è correttamente tarato (assenza di offset di zero) e l'ambiente di misura è schermato da disturbi elettromagnetici o fluttuazioni termiche.",
+                    tags: [
+                        { text: "Errore Sistematico: Assente / Trascurabile", type: "ok" },
+                        { text: "Errore Accidentale: Minimo", type: "ok" }
+                    ],
+                    color: "#10b981"
+                },
+                {
+                    title: "Strumento non accurato ma preciso",
+                    desc: "I dardi sono tutti vicini tra loro (alta ripetibilità), ma colpiscono una zona spostata rispetto al centro. Le letture sono stabili intorno a ~5,65 V invece di 5,00 V.",
+                    physics: "Causa fisica (Errore Sistematico): Staratura dello strumento, errore di zero, resistenza interna non compensata o deriva termica costante. Si risolve ricalibrando lo strumento.",
+                    tags: [
+                        { text: "Errore Sistematico: ELEVATO (+0,65 V)", type: "err" },
+                        { text: "Errore Accidentale: Basso (Buona ripetibilità)", type: "ok" }
+                    ],
+                    color: "#f59e0b"
+                },
+                {
+                    title: "Strumento accurato ma non preciso",
+                    desc: "I dardi sono sparpagliati attorno al centro senza un punto fisso, ma la loro posizione media coincide con il centro del bersaglio (media ≈ 5,00 V).",
+                    physics: "Causa fisica (Errore Accidentale): Rumore elettrico, disturbi elettromagnetici esterni, falsi contatti o vibrazioni. Si riduce ripetendo le misure e facendo la media.",
+                    tags: [
+                        { text: "Errore Sistematico: Basso (Media centrata)", type: "ok" },
+                        { text: "Errore Accidentale: ELEVATO (Alta dispersione)", type: "warn" }
+                    ],
+                    color: "#38bdf8"
+                },
+                {
+                    title: "Strumento nè accurato nè preciso",
+                    desc: "I dardi sono sia lontani dal centro sia molto dispersi tra loro. Ogni singola lettura è inaffidabile e anche la media risulta sfalsata rispetto ai 5,00 V reali.",
+                    physics: "Causa fisica (Errore Sistematico + Accidentale): Strumento starato (offset) sottoposto contemporaneamente a forte rumore elettrico o instabilità dell'alimentazione.",
+                    tags: [
+                        { text: "Errore Sistematico: ELEVATO (+0,65 V)", type: "err" },
+                        { text: "Errore Accidentale: ELEVATO (Alta dispersione)", type: "err" }
+                    ],
+                    color: "#ef4444"
+                }
+            ];
+
+            function updateParametersFromSlider(val) {
+                state.sliderVal = Number(val);
+                let bias = 0;
+                let disp = 0.03;
+                let caseIdx = 0;
+
+                if (val <= 100) {
+                    const t = val / 100;
+                    bias = t * 0.65;
+                    disp = 0.03;
+                    caseIdx = t < 0.5 ? 0 : 1;
+                } else if (val <= 200) {
+                    const t = (val - 100) / 100;
+                    bias = (1 - t) * 0.65;
+                    disp = 0.03 + t * 0.52;
+                    caseIdx = t < 0.5 ? 1 : 2;
+                } else {
+                    const t = (val - 200) / 100;
+                    bias = t * 0.65;
+                    disp = 0.55;
+                    caseIdx = t < 0.5 ? 2 : 3;
+                }
+
+                state.biasV = bias;
+                state.dispersionV = disp;
+                state.activeCaseIndex = caseIdx;
+
+                updateDidacticUI(caseIdx, val);
+                recalculateExistingDarts();
+            }
+
+            function updateDidacticUI(caseIdx, sliderVal) {
+                const info = DIDACTIC_CASES[caseIdx];
+                
+                presetButtons.forEach((btn, idx) => {
+                    btn.classList.toggle('active', idx === caseIdx);
+                });
+
+                const pct = Math.round((sliderVal / 300) * 100);
+                sliderLabel.textContent = `${pct}% — ${info.title.replace('Strumento ', '')}`;
+
+                didacticTitle.textContent = info.title;
+                didacticTitle.style.color = info.color;
+                didacticDesc.textContent = info.desc;
+                didacticPhysics.innerHTML = info.physics.replace('Causa fisica', '<strong>Causa fisica</strong>');
+
+                errorTags.innerHTML = info.tags.map(tag => 
+                    `<span class="etag etag-${tag.type}">${tag.text}</span>`
+                ).join('');
+            }
+
+            function recalculateExistingDarts() {
+                const pxPerVolt = 76;
+                state.darts.forEach((dart, idx) => {
+                    const base = NORMALIZED_NOISE[idx % NORMALIZED_NOISE.length];
+                    const voltage = TRUE_VALUE + state.biasV + (base.nv * state.dispersionV);
+                    
+                    const biasPxX = state.biasV * pxPerVolt * 0.85;
+                    const biasPxY = -state.biasV * pxPerVolt * 0.52;
+                    const dispPx = state.dispersionV * pxPerVolt;
+
+                    dart.targetX = biasPxX + base.nx * dispPx;
+                    dart.targetY = biasPxY + base.ny * dispPx;
+                    dart.voltage = voltage;
+                });
+
+                if (state.darts.length > 0) {
+                    state.currentVoltage = state.darts[state.darts.length - 1].voltage;
+                } else {
+                    state.currentVoltage = TRUE_VALUE + state.biasV;
+                }
+                updateReadouts();
+            }
+
+            function spawnNextDart() {
+                if (state.darts.length >= MAX_DARTS) {
+                    state.darts = [];
+                }
+
+                const idx = state.darts.length;
+                const base = NORMALIZED_NOISE[idx % NORMALIZED_NOISE.length];
+                const voltage = TRUE_VALUE + state.biasV + (base.nv * state.dispersionV);
+
+                const pxPerVolt = 76;
+                const biasPxX = state.biasV * pxPerVolt * 0.85;
+                const biasPxY = -state.biasV * pxPerVolt * 0.52;
+                const dispPx = state.dispersionV * pxPerVolt;
+
+                const targetX = biasPxX + base.nx * dispPx;
+                const targetY = biasPxY + base.ny * dispPx;
+
+                state.darts.push({
+                    index: idx + 1,
+                    voltage: voltage,
+                    x: targetX + (Math.random() - 0.5) * 90,
+                    y: targetY - 80,
+                    targetX: targetX,
+                    targetY: targetY,
+                    scale: 2.2,
+                    alpha: 0.2
+                });
+
+                state.currentVoltage = voltage;
+                updateReadouts();
+            }
+
+            function updateReadouts() {
+                digitalValueEl.textContent = `${state.currentVoltage.toFixed(2).replace('.', ',')} V`;
+                sampleCounterBadge.textContent = `Campioni: ${state.darts.length} / ${MAX_DARTS}`;
+
+                const clampedV = Math.max(4.0, Math.min(6.0, state.currentVoltage));
+                state.targetNeedleAngle = ((clampedV - 5.0) / 1.0) * (Math.PI / 3.2);
+
+                if (state.darts.length > 0) {
+                    const sum = state.darts.reduce((acc, d) => acc + d.voltage, 0);
+                    const mean = sum / state.darts.length;
+                    const bias = mean - TRUE_VALUE;
+                    const variance = state.darts.reduce((acc, d) => acc + Math.pow(d.voltage - mean, 2), 0) / state.darts.length;
+                    const stdDev = Math.sqrt(variance);
+
+                    statMeanEl.textContent = `${mean.toFixed(2).replace('.', ',')} V`;
+                    statBiasEl.textContent = `${bias >= 0 ? '+' : ''}${bias.toFixed(2).replace('.', ',')} V`;
+                    statDispersionEl.textContent = `±${stdDev.toFixed(2).replace('.', ',')} V`;
+                } else {
+                    statMeanEl.textContent = `-- V`;
+                    statBiasEl.textContent = `${state.biasV >= 0 ? '+' : ''}${state.biasV.toFixed(2).replace('.', ',')} V`;
+                    statDispersionEl.textContent = `±${state.dispersionV.toFixed(2).replace('.', ',')} V`;
+                }
+            }
+
+            function drawAnalogMeter() {
+                const w = analogCanvas.width;
+                const h = analogCanvas.height;
+                analogCtx.clearRect(0, 0, w, h);
+
+                const cx = w / 2;
+                const cy = h + 16;
+                const radius = 100;
+
+                state.needleAngle += (state.targetNeedleAngle - state.needleAngle) * 0.18;
+
+                analogCtx.beginPath();
+                analogCtx.arc(cx, cy, radius, -Math.PI * 0.82, -Math.PI * 0.18);
+                analogCtx.strokeStyle = '#334155';
+                analogCtx.lineWidth = 9;
+                analogCtx.stroke();
+
+                for (let i = -5; i <= 5; i++) {
+                    const angle = -Math.PI / 2 + (i / 5) * (Math.PI / 3.2);
+                    const r1 = radius - 8;
+                    const r2 = i % 5 === 0 ? radius + 8 : radius + 3;
+                    analogCtx.beginPath();
+                    analogCtx.moveTo(cx + Math.cos(angle) * r1, cy + Math.sin(angle) * r1);
+                    analogCtx.lineTo(cx + Math.cos(angle) * r2, cy + Math.sin(angle) * r2);
+                    analogCtx.strokeStyle = i === 0 ? '#38bdf8' : '#94a3b8';
+                    analogCtx.lineWidth = i === 0 ? 2.5 : 1.2;
+                    analogCtx.stroke();
+                }
+
+                analogCtx.fillStyle = '#94a3b8';
+                analogCtx.font = '10px Consolas, monospace';
+                analogCtx.textAlign = 'center';
+                analogCtx.fillText('4V', cx - 64, cy - 64);
+                analogCtx.fillStyle = '#38bdf8';
+                analogCtx.fillText('5V (Vv)', cx, cy - 84);
+                analogCtx.fillStyle = '#94a3b8';
+                analogCtx.fillText('6V', cx + 64, cy - 64);
+
+                const needleA = -Math.PI / 2 + state.needleAngle;
+                analogCtx.beginPath();
+                analogCtx.moveTo(cx, cy);
+                analogCtx.lineTo(cx + Math.cos(needleA) * (radius + 4), cy + Math.sin(needleA) * (radius + 4));
+                analogCtx.strokeStyle = '#ef4444';
+                analogCtx.lineWidth = 2.5;
+                analogCtx.stroke();
+
+                analogCtx.beginPath();
+                analogCtx.arc(cx, cy, 11, 0, Math.PI * 2);
+                analogCtx.fillStyle = '#1e293b';
+                analogCtx.fill();
+                analogCtx.strokeStyle = '#64748b';
+                analogCtx.lineWidth = 2;
+                analogCtx.stroke();
+            }
+
+            function drawTargetCanvas() {
+                const w = targetCanvas.width;
+                const h = targetCanvas.height;
+                targetCtx.clearRect(0, 0, w, h);
+
+                const cx = w / 2;
+                const cy = h / 2;
+
+                targetCtx.strokeStyle = 'rgba(51, 65, 85, 0.35)';
+                targetCtx.lineWidth = 1;
+                for (let x = 20; x < w; x += 25) {
+                    targetCtx.beginPath();
+                    targetCtx.moveTo(x, 0);
+                    targetCtx.lineTo(x, h);
+                    targetCtx.stroke();
+                }
+                for (let y = 20; y < h; y += 25) {
+                    targetCtx.beginPath();
+                    targetCtx.moveTo(0, y);
+                    targetCtx.lineTo(w, y);
+                    targetCtx.stroke();
+                }
+
+                const rings = [
+                    { r: 108, fill: 'rgba(30, 41, 59, 0.75)', stroke: '#475569' },
+                    { r: 81,  fill: 'rgba(15, 23, 42, 0.85)', stroke: '#64748b' },
+                    { r: 54,  fill: 'rgba(30, 41, 59, 0.9)',  stroke: '#38bdf8' },
+                    { r: 27,  fill: 'rgba(56, 189, 248, 0.15)', stroke: '#38bdf8' },
+                    { r: 8,   fill: '#ef4444', stroke: '#fca5a5' }
+                ];
+
+                rings.forEach(ring => {
+                    targetCtx.beginPath();
+                    targetCtx.arc(cx, cy, ring.r, 0, Math.PI * 2);
+                    targetCtx.fillStyle = ring.fill;
+                    targetCtx.fill();
+                    targetCtx.strokeStyle = ring.stroke;
+                    targetCtx.lineWidth = 1.5;
+                    targetCtx.stroke();
+                });
+
+                targetCtx.strokeStyle = 'rgba(56, 189, 248, 0.45)';
+                targetCtx.setLineDash([4, 4]);
+                targetCtx.beginPath();
+                targetCtx.moveTo(cx - 120, cy);
+                targetCtx.lineTo(cx + 120, cy);
+                targetCtx.moveTo(cx, cy - 120);
+                targetCtx.lineTo(cx, cy + 120);
+                targetCtx.stroke();
+                targetCtx.setLineDash([]);
+
+                const activeColor = DIDACTIC_CASES[state.activeCaseIndex].color;
+
+                if (state.darts.length >= 2) {
+                    let sumX = 0, sumY = 0;
+                    state.darts.forEach(d => { sumX += d.x; sumY += d.y; });
+                    const meanX = cx + sumX / state.darts.length;
+                    const meanY = cy + sumY / state.darts.length;
+
+                    targetCtx.beginPath();
+                    targetCtx.moveTo(cx, cy);
+                    targetCtx.lineTo(meanX, meanY);
+                    targetCtx.strokeStyle = '#f59e0b';
+                    targetCtx.lineWidth = 2;
+                    targetCtx.stroke();
+
+                    targetCtx.strokeStyle = '#f59e0b';
+                    targetCtx.lineWidth = 2;
+                    targetCtx.beginPath();
+                    targetCtx.moveTo(meanX - 6, meanY - 6);
+                    targetCtx.lineTo(meanX + 6, meanY + 6);
+                    targetCtx.moveTo(meanX + 6, meanY - 6);
+                    targetCtx.lineTo(meanX - 6, meanY + 6);
+                    targetCtx.stroke();
+                }
+
+                state.darts.forEach(dart => {
+                    dart.x += (dart.targetX - dart.x) * 0.22;
+                    dart.y += (dart.targetY - dart.y) * 0.22;
+                    dart.scale += (1.0 - dart.scale) * 0.22;
+                    dart.alpha += (1.0 - dart.alpha) * 0.22;
+
+                    const dx = cx + dart.x;
+                    const dy = cy + dart.y;
+
+                    targetCtx.save();
+                    targetCtx.translate(dx, dy);
+                    targetCtx.scale(dart.scale, dart.scale);
+                    targetCtx.globalAlpha = dart.alpha;
+
+                    targetCtx.beginPath();
+                    targetCtx.arc(0, 0, 5.5, 0, Math.PI * 2);
+                    targetCtx.fillStyle = activeColor;
+                    targetCtx.fill();
+                    targetCtx.strokeStyle = '#ffffff';
+                    targetCtx.lineWidth = 1.5;
+                    targetCtx.stroke();
+
+                    targetCtx.beginPath();
+                    targetCtx.moveTo(0, 0);
+                    targetCtx.lineTo(11, -11);
+                    targetCtx.strokeStyle = '#e2e8f0';
+                    targetCtx.lineWidth = 2;
+                    targetCtx.stroke();
+
+                    targetCtx.fillStyle = '#f8fafc';
+                    targetCtx.font = 'bold 10px Consolas, monospace';
+                    targetCtx.fillText(`#${dart.index}`, 8, 4);
+
+                    targetCtx.restore();
+                });
+
+                targetCtx.fillStyle = '#94a3b8';
+                targetCtx.font = '11px Segoe UI, sans-serif';
+                targetCtx.textAlign = 'left';
+                targetCtx.fillText('● Punto rosso: Valore Vero (5,00 V)', 12, h - 22);
+                targetCtx.fillStyle = '#f59e0b';
+                targetCtx.fillText('✕ Croce gialla: Media misure (Bias sistematico)', 12, h - 8);
+            }
+
+            function drawChartCanvas() {
+                const w = chartCanvas.width;
+                const h = chartCanvas.height;
+                chartCtx.clearRect(0, 0, w, h);
+
+                const padLeft = 52;
+                const padRight = 24;
+                const padTop = 22;
+                const padBottom = 32;
+                const plotW = w - padLeft - padRight;
+                const plotH = h - padTop - padBottom;
+
+                const minV = 4.0;
+                const maxV = 6.4;
+                const vToY = (v) => padTop + plotH - ((v - minV) / (maxV - minV)) * plotH;
+                const iToX = (i) => padLeft + (i / (MAX_DARTS - 1)) * plotW;
+
+                chartCtx.font = '11px Consolas, monospace';
+                chartCtx.textAlign = 'right';
+                for (let v = 4.0; v <= 6.4; v += 0.4) {
+                    const y = vToY(v);
+                    chartCtx.strokeStyle = 'rgba(51, 65, 85, 0.5)';
+                    chartCtx.lineWidth = 1;
+                    chartCtx.beginPath();
+                    chartCtx.moveTo(padLeft, y);
+                    chartCtx.lineTo(w - padRight, y);
+                    chartCtx.stroke();
+
+                    chartCtx.fillStyle = '#94a3b8';
+                    chartCtx.fillText(`${v.toFixed(1).replace('.', ',')}V`, padLeft - 8, y + 4);
+                }
+
+                const trueY = vToY(TRUE_VALUE);
+                chartCtx.strokeStyle = '#38bdf8';
+                chartCtx.lineWidth = 2;
+                chartCtx.setLineDash([6, 4]);
+                chartCtx.beginPath();
+                chartCtx.moveTo(padLeft, trueY);
+                chartCtx.lineTo(w - padRight, trueY);
+                chartCtx.stroke();
+                chartCtx.setLineDash([]);
+
+                chartCtx.fillStyle = '#38bdf8';
+                chartCtx.textAlign = 'left';
+                chartCtx.fillText('Valore Vero (5,00 V)', padLeft + 6, trueY - 6);
+
+                if (state.darts.length > 0) {
+                    const meanV = state.darts.reduce((s, d) => s + d.voltage, 0) / state.darts.length;
+                    const meanY = vToY(meanV);
+
+                    chartCtx.strokeStyle = '#f59e0b';
+                    chartCtx.lineWidth = 1.5;
+                    chartCtx.beginPath();
+                    chartCtx.moveTo(padLeft, meanY);
+                    chartCtx.lineTo(w - padRight, meanY);
+                    chartCtx.stroke();
+
+                    chartCtx.fillStyle = '#f59e0b';
+                    chartCtx.textAlign = 'right';
+                    chartCtx.fillText(`Media: ${meanV.toFixed(2).replace('.', ',')}V`, w - padRight - 4, meanY - 6);
+                }
+
+                const activeColor = DIDACTIC_CASES[state.activeCaseIndex].color;
+
+                if (state.darts.length > 1) {
+                    chartCtx.beginPath();
+                    state.darts.forEach((d, idx) => {
+                        const x = iToX(idx);
+                        const y = vToY(d.voltage);
+                        if (idx === 0) chartCtx.moveTo(x, y);
+                        else chartCtx.lineTo(x, y);
+                    });
+                    chartCtx.strokeStyle = activeColor;
+                    chartCtx.lineWidth = 2.5;
+                    chartCtx.stroke();
+                }
+
+                state.darts.forEach((d, idx) => {
+                    const x = iToX(idx);
+                    const y = vToY(d.voltage);
+
+                    chartCtx.beginPath();
+                    chartCtx.moveTo(x, trueY);
+                    chartCtx.lineTo(x, y);
+                    chartCtx.strokeStyle = 'rgba(248, 250, 252, 0.2)';
+                    chartCtx.lineWidth = 1;
+                    chartCtx.stroke();
+
+                    chartCtx.beginPath();
+                    chartCtx.arc(x, y, 5, 0, Math.PI * 2);
+                    chartCtx.fillStyle = activeColor;
+                    chartCtx.fill();
+                    chartCtx.strokeStyle = '#0f172a';
+                    chartCtx.lineWidth = 1.5;
+                    chartCtx.stroke();
+
+                    chartCtx.fillStyle = '#f8fafc';
+                    chartCtx.textAlign = 'center';
+                    chartCtx.font = '10px Consolas, monospace';
+                    chartCtx.fillText(d.voltage.toFixed(2).replace('.', ','), x, y - 9);
+                });
+
+                chartCtx.fillStyle = '#94a3b8';
+                chartCtx.textAlign = 'center';
+                chartCtx.font = '11px Segoe UI, sans-serif';
+                for (let i = 0; i < MAX_DARTS; i++) {
+                    const x = iToX(i);
+                    chartCtx.fillText(`M${i + 1}`, x, h - 9);
+                }
+            }
+
+            function animationLoop(timestamp) {
+                if (state.isPlaying) {
+                    if (timestamp - state.lastSampleTime >= SAMPLE_INTERVAL) {
+                        spawnNextDart();
+                        state.lastSampleTime = timestamp;
+                    }
+                }
+
+                drawAnalogMeter();
+                drawTargetCanvas();
+                drawChartCanvas();
+
+                requestAnimationFrame(animationLoop);
+            }
+
+            regimeSlider.addEventListener('input', (e) => {
+                updateParametersFromSlider(e.target.value);
+            });
+
+            presetButtons.forEach(btn => {
+                btn.addEventListener('click', () => {
+                    const caseNum = Number(btn.dataset.case);
+                    const sliderTargets = [0, 100, 200, 300];
+                    const targetVal = sliderTargets[caseNum];
+                    regimeSlider.value = targetVal;
+                    updateParametersFromSlider(targetVal);
+                    
+                    if (state.darts.length === 0) {
+                        spawnNextDart();
+                    }
+                });
+            });
+
+            btnPlay.addEventListener('click', () => {
+                state.isPlaying = true;
+                state.lastSampleTime = performance.now() - SAMPLE_INTERVAL + 150;
+            });
+
+            btnPause.addEventListener('click', () => {
+                state.isPlaying = false;
+            });
+
+            btnReset.addEventListener('click', () => {
+                state.darts = [];
+                state.currentVoltage = TRUE_VALUE + state.biasV;
+                updateReadouts();
+                if (state.isPlaying) {
+                    state.lastSampleTime = performance.now();
+                }
+            });
+
+            updateParametersFromSlider(0);
+            spawnNextDart();
+            requestAnimationFrame(animationLoop);
+
+            // --- 5. MODULO 4: CALCOLATRICE SCHEDA LABORATORIO ---
+            window.updateLabCalc = () => {
+                const inputs = document.querySelectorAll('#labTableBody .lab-input');
+                const diffs = document.querySelectorAll('#labTableBody .lab-diff');
+                const values = [];
+
+                inputs.forEach((inp, i) => {
+                    const v = parseFloat(inp.value) || 0;
+                    values.push(v);
+                    const d = v - 5.00;
+                    diffs[i].textContent = `${d >= 0 ? '+' : ''}${d.toFixed(2).replace('.', ',')} V`;
+                });
+
+                const mean = values.reduce((a, b) => a + b, 0) / values.length;
+                const maxV = Math.max(...values);
+                const minV = Math.min(...values);
+                const semiDisp = (maxV - minV) / 2;
+                const sysErr = mean - 5.00;
+
+                document.getElementById('labMeanVal').textContent = `${mean.toFixed(2).replace('.', ',')} V`;
+                document.getElementById('labPrecVal').textContent = `±${semiDisp.toFixed(2).replace('.', ',')} V`;
+                document.getElementById('labAccVal').textContent = `${sysErr >= 0 ? '+' : ''}${sysErr.toFixed(2).replace('.', ',')} V`;
+
+                const diagText = document.getElementById('labDiagnosisText');
+                const isAccurate = Math.abs(sysErr) <= 0.03;
+                const isPrecise = semiDisp <= 0.03;
+
+                if (isAccurate && isPrecise) {
+                    diagText.innerHTML = `Ottimo! Lo strumento risulta <strong>accurato e preciso</strong>: la media (${mean.toFixed(2).replace('.', ',')} V) coincide con il riferimento e la dispersione è minima.`;
+                } else if (!isAccurate && isPrecise) {
+                    diagText.innerHTML = `Lo strumento presenta un <strong>errore sistematico di ${sysErr >= 0 ? '+' : ''}${sysErr.toFixed(2).replace('.', ',')} V</strong> (scarsa accuratezza), ma le misure sono molto vicine tra loro (<strong>alta precisione</strong>).`;
+                } else if (isAccurate && !isPrecise) {
+                    diagText.innerHTML = `La media (${mean.toFixed(2).replace('.', ',')} V) è vicina al valore vero (<strong>buona accuratezza media</strong>), ma la dispersione (±${semiDisp.toFixed(2).replace('.', ',')} V) indica <strong>scarsa precisione</strong>.`;
+                } else {
+                    diagText.innerHTML = `Lo strumento risulta <strong>nè accurato nè preciso</strong>: presenta sia un errore sistematico (${sysErr >= 0 ? '+' : ''}${sysErr.toFixed(2).replace('.', ',')} V) sia un'elevata dispersione casuale (±${semiDisp.toFixed(2).replace('.', ',')} V).`;
+                }
+            };
+            updateLabCalc();
+
+            // --- 6. MODULO 5: VERIFICA FINALE (6 DOMANDE) ---
+            const QUIZ_DATA = [
+                {
+                    q: "1. Un voltmetro misura sempre 5,2 V quando il valore di riferimento è 5 V. Che tipo di errore si manifesta?",
+                    options: ["Accidentale", "Sistematico", "Di parallasse"],
+                    correct: 1
+                },
+                {
+                    q: "2. Ripetendo una misura ottengo 4,98 V, 5,02 V, 4,99 V e 5,01 V. Quale fenomeno è presente?",
+                    options: ["Errore accidentale", "Errore sistematico", "Errore di taratura necessariamente"],
+                    correct: 0
+                },
+                {
+                    q: "3. Come si riduce l'errore di parallasse?",
+                    options: ["Ripetendo la misura dieci volte", "Guardando frontalmente la scala", "Aumentando la portata"],
+                    correct: 1
+                },
+                {
+                    q: "4. Uno strumento restituisce sempre 10,5 V quando il valore corretto è 10 V. È:",
+                    options: ["Preciso ma non accurato", "Accurato ma non preciso", "Né preciso né ripetibile"],
+                    correct: 0
+                },
+                {
+                    q: "5. Quale caratteristica indica la vicinanza delle misure ripetute tra loro?",
+                    options: ["Accuratezza", "Precisione", "Sensibilità"],
+                    correct: 1
+                },
+                {
+                    q: "6. Calcolare la media di molte misure permette di:",
+                    options: ["Eliminare ogni errore", "Ridurre l'effetto degli errori casuali", "Eliminare automaticamente gli errori sistematici"],
+                    correct: 1
+                }
+            ];
+
+            const quizContainer = document.getElementById('quizContainer');
+            const quizScoreBadge = document.getElementById('quizScoreBadge');
+
+            function renderQuiz() {
+                quizContainer.innerHTML = QUIZ_DATA.map((item, qIdx) => `
+                    <div class="quiz-item" data-qidx="${qIdx}">
+                        <div class="quiz-question">${item.q}</div>
+                        <div class="quiz-options">
+                            ${item.options.map((opt, oIdx) => `
+                                <label class="quiz-opt" data-oidx="${oIdx}">
+                                    <input type="radio" name="q${qIdx}" value="${oIdx}">
+                                    <span>${opt}</span>
+                                </label>
+                            `).join('')}
+                        </div>
+                    </div>
+                `).join('');
+                quizScoreBadge.textContent = `Punteggio: 0 / ${QUIZ_DATA.length}`;
+            }
+
+            document.getElementById('btnCheckQuiz').addEventListener('click', () => {
+                let score = 0;
+                QUIZ_DATA.forEach((item, qIdx) => {
+                    const qDiv = quizContainer.querySelector(`.quiz-item[data-qidx="${qIdx}"]`);
+                    const labels = qDiv.querySelectorAll('.quiz-opt');
+                    const selected = qDiv.querySelector('input[type="radio"]:checked');
+
+                    labels.forEach((lbl, oIdx) => {
+                        lbl.classList.remove('correct', 'wrong');
+                        if (oIdx === item.correct) {
+                            lbl.classList.add('correct');
+                        } else if (selected && Number(selected.value) === oIdx) {
+                            lbl.classList.add('wrong');
+                        }
+                    });
+
+                    if (selected && Number(selected.value) === item.correct) {
+                        score++;
+                    }
+                });
+                quizScoreBadge.textContent = `Punteggio: ${score} / ${QUIZ_DATA.length}`;
+            });
+
+            document.getElementById('btnResetQuiz').addEventListener('click', renderQuiz);
+            renderQuiz();
+        })();
+    </script>
+</body>
+</html>
